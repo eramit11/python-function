@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Functions 3D Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #16213e 100%);
+            color: #e0e0e0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(0, 191, 255, 0.1));
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(138, 43, 226, 0.3);
+            transform: translateZ(50px);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateZ(50px); }
+            50% { transform: translateY(-20px) translateZ(50px); }
+        }
+
+        h1 {
+            font-size: 3.5em;
+            background: linear-gradient(135deg, #00d4ff, #7928ca, #ff0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            text-shadow: 0 0 30px rgba(121, 40, 202, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #a0a0a0;
+            margin-top: 10px;
+        }
+
+        .search-box {
+            margin: 30px auto;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 50px;
+            color: #fff;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: #7928ca;
+            box-shadow: 0 0 20px rgba(121, 40, 202, 0.5);
+            transform: scale(1.02);
+        }
+
+        .category {
+            margin: 40px 0;
+        }
+
+        .category-title {
+            font-size: 2em;
+            margin-bottom: 25px;
+            color: #00d4ff;
+            padding-left: 20px;
+            border-left: 5px solid #7928ca;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .functions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            perspective: 1000px;
+        }
+
+        .function-card {
+            background: linear-gradient(135deg, rgba(30, 30, 60, 0.8), rgba(15, 15, 35, 0.9));
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .function-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(135deg, transparent, rgba(138, 43, 226, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+        }
+
+        .function-card:hover::before {
+            left: 100%;
+        }
+
+        .function-card:hover {
+            transform: translateZ(30px) rotateX(5deg) rotateY(-5deg) scale(1.05);
+            box-shadow: 0 20px 60px rgba(138, 43, 226, 0.4), 0 0 30px rgba(0, 191, 255, 0.3);
+            border-color: #7928ca;
+        }
+
+        .function-name {
+            font-size: 1.5em;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .function-syntax {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #ff79c6;
+            margin: 10px 0;
+            border-left: 3px solid #7928ca;
+        }
+
+        .function-desc {
+            color: #b0b0b0;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+
+        .function-example {
+            background: rgba(0, 212, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .example-title {
+            color: #50fa7b;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .example-code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #f8f8f2;
+            white-space: pre-wrap;
+            margin: 5px 0;
+        }
+
+        .example-output {
+            color: #50fa7b;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: rgba(138, 43, 226, 0.3);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            margin: 5px 5px 0 0;
+            color: #bd93f9;
+            border: 1px solid rgba(189, 147, 249, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .functions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #7928ca, #00d4ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(121, 40, 202, 0.5);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .scroll-indicator:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 10px 30px rgba(121, 40, 202, 0.7);
+        }
+
+        .scroll-indicator::after {
+            content: '↑';
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐍 Python Functions</h1>
+            <p class="subtitle">Explore Python's powerful built-in functions with interactive 3D cards</p>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search for a function...">
+            </div>
+        </header>
+
+        <div id="functionsContainer"></div>
+    </div>
+
+    <div class="scroll-indicator" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"></div>
+
+    <script>
+        const functionsData = {
+            "Type Conversion": [
+                {
+                    name: "str()",
+                    syntax: "str(object)",
+                    desc: "Converts an object into a string",
+                    example: {
+                        code: "num = 42\ntext = str(num)\nprint(text, type(text))",
+                        output: "42 <class 'str'>"
+                    },
+                    tags: ["conversion", "string"]
+                },
+                {
+                    name: "int()",
+                    syntax: "int(value)",
+                    desc: "Converts a value into an integer",
+                    example: {
+                        code: "price = int('99')\nprint(price + 1)",
+                        output: "100"
+                    },
+                    tags: ["conversion", "number"]
+                },
+                {
+                    name: "float()",
+                    syntax: "float(value)",
+                    desc: "Converts a value into a floating-point number",
+                    example: {
+                        code: "pi = float('3.14')\nprint(pi * 2)",
+                        output: "6.28"
+                    },
+                    tags: ["conversion", "number"]
+                },
+                {
+                    name: "bool()",
+                    syntax: "bool(value)",
+                    desc: "Converts a value to Boolean",
+                    example: {
+                        code: "print(bool(1), bool(0), bool(''))",
+                        output: "True False False"
+                    },
+                    tags: ["conversion", "boolean"]
+                },
+                {
+                    name: "list()",
+                    syntax: "list(iterable)",
+                    desc: "Converts an iterable into a list",
+                    example: {
+                        code: "word = 'Python'\nletters = list(word)\nprint(letters)",
+                        output: "['P', 'y', 't', 'h', 'o', 'n']"
+                    },
+                    tags: ["conversion", "sequence"]
+                },
+                {
+                    name: "tuple()",
+                    syntax: "tuple(iterable)",
+                    desc: "Converts an iterable into a tuple",
+                    example: {
+                        code: "coords = tuple([10, 20, 30])\nprint(coords)",
+                        output: "(10, 20, 30)"
+                    },
+                    tags: ["conversion", "sequence"]
+                },
+                {
+                    name: "set()",
+                    syntax: "set(iterable)",
+                    desc: "Creates a set from an iterable (removes duplicates)",
+                    example: {
+                        code: "numbers = [1, 2, 2, 3, 3, 3]\nunique = set(numbers)\nprint(unique)",
+                        output: "{1, 2, 3}"
+                    },
+                    tags: ["conversion", "collection"]
+                },
+                {
+                    name: "dict()",
+                    syntax: "dict(mapping or iterable)",
+                    desc: "Creates a dictionary from key-value pairs",
+                    example: {
+                        code: "pairs = [('name', 'Alice'), ('age', 25)]\ninfo = dict(pairs)\nprint(info)",
+                        output: "{'name': 'Alice', 'age': 25}"
+                    },
+                    tags: ["conversion", "mapping"]
+                }
+            ],
+            "Sequence & Math Operations": [
+                {
+                    name: "len()",
+                    syntax: "len(object)",
+                    desc: "Returns the number of items in an object",
+                    example: {
+                        code: "shopping = ['🍎', '🍌', '🍊']\nprint(f'Items: {len(shopping)}')",
+                        output: "Items: 3"
+                    },
+                    tags: ["sequence", "basic"]
+                },
+                {
+                    name: "range()",
+                    syntax: "range(start, stop, step)",
+                    desc: "Generates a sequence of numbers",
+                    example: {
+                        code: "# Even numbers from 0 to 10\nfor n in range(0, 11, 2):\n    print(n, end=' ')",
+                        output: "0 2 4 6 8 10"
+                    },
+                    tags: ["sequence", "loop"]
+                },
+                {
+                    name: "sum()",
+                    syntax: "sum(iterable, start=0)",
+                    desc: "Returns the sum of values in an iterable",
+                    example: {
+                        code: "scores = [85, 90, 78, 92]\ntotal = sum(scores)\nprint(f'Total: {total}')",
+                        output: "Total: 345"
+                    },
+                    tags: ["math", "aggregate"]
+                },
+                {
+                    name: "min()",
+                    syntax: "min(iterable)",
+                    desc: "Returns the smallest value in an iterable",
+                    example: {
+                        code: "temps = [72, 68, 75, 70, 69]\nprint(f'Coldest: {min(temps)}°F')",
+                        output: "Coldest: 68°F"
+                    },
+                    tags: ["math", "aggregate"]
+                },
+                {
+                    name: "max()",
+                    syntax: "max(iterable)",
+                    desc: "Returns the largest value in an iterable",
+                    example: {
+                        code: "prices = [9.99, 15.50, 7.25, 12.00]\nprint(f'Max: ${max(prices)}')",
+                        output: "Max: $15.5"
+                    },
+                    tags: ["math", "aggregate"]
+                },
+                {
+                    name: "abs()",
+                    syntax: "abs(number)",
+                    desc: "Returns the absolute value of a number",
+                    example: {
+                        code: "temp_change = -15\nprint(f'Change: {abs(temp_change)}°')",
+                        output: "Change: 15°"
+                    },
+                    tags: ["math", "number"]
+                },
+                {
+                    name: "round()",
+                    syntax: "round(number, ndigits=None)",
+                    desc: "Rounds a number to specified decimals",
+                    example: {
+                        code: "price = 19.7856\nprint(f'${round(price, 2)}')",
+                        output: "$19.79"
+                    },
+                    tags: ["math", "number"]
+                },
+                {
+                    name: "pow()",
+                    syntax: "pow(base, exp, mod=None)",
+                    desc: "Returns a number raised to a power",
+                    example: {
+                        code: "result = pow(2, 10)\nprint(f'2^10 = {result}')",
+                        output: "2^10 = 1024"
+                    },
+                    tags: ["math", "power"]
+                },
+                {
+                    name: "divmod()",
+                    syntax: "divmod(a, b)",
+                    desc: "Returns quotient and remainder",
+                    example: {
+                        code: "q, r = divmod(17, 5)\nprint(f'17 ÷ 5 = {q} R {r}')",
+                        output: "17 ÷ 5 = 3 R 2"
+                    },
+                    tags: ["math", "division"]
+                }
+            ],
+            "Iterators & Functional": [
+                {
+                    name: "sorted()",
+                    syntax: "sorted(iterable, key=None, reverse=False)",
+                    desc: "Returns a sorted list from an iterable",
+                    example: {
+                        code: "names = ['Zoe', 'Alice', 'Bob']\nprint(sorted(names))",
+                        output: "['Alice', 'Bob', 'Zoe']"
+                    },
+                    tags: ["sequence", "sort"]
+                },
+                {
+                    name: "enumerate()",
+                    syntax: "enumerate(iterable, start=0)",
+                    desc: "Returns index and value pairs",
+                    example: {
+                        code: "fruits = ['🍎', '🍌', '🍊']\nfor i, f in enumerate(fruits, 1):\n    print(f'{i}. {f}')",
+                        output: "1. 🍎\n2. 🍌\n3. 🍊"
+                    },
+                    tags: ["iterator", "loop"]
+                },
+                {
+                    name: "zip()",
+                    syntax: "zip(*iterables)",
+                    desc: "Combines multiple iterables element-wise",
+                    example: {
+                        code: "names = ['Alice', 'Bob']\nages = [25, 30]\nfor n, a in zip(names, ages):\n    print(f'{n}: {a}')",
+                        output: "Alice: 25\nBob: 30"
+                    },
+                    tags: ["iterator", "combine"]
+                },
+                {
+                    name: "map()",
+                    syntax: "map(function, iterable)",
+                    desc: "Applies a function to each item",
+                    example: {
+                        code: "nums = [1, 2, 3, 4]\nsquares = list(map(lambda x: x**2, nums))\nprint(squares)",
+                        output: "[1, 4, 9, 16]"
+                    },
+                    tags: ["functional", "transform"]
+                },
+                {
+                    name: "filter()",
+                    syntax: "filter(function, iterable)",
+                    desc: "Filters elements based on a condition",
+                    example: {
+                        code: "nums = [1, 2, 3, 4, 5, 6]\nevens = list(filter(lambda x: x % 2 == 0, nums))\nprint(evens)",
+                        output: "[2, 4, 6]"
+                    },
+                    tags: ["functional", "filter"]
+                },
+                {
+                    name: "any()",
+                    syntax: "any(iterable)",
+                    desc: "Returns True if any element is True",
+                    example: {
+                        code: "scores = [55, 62, 48, 71]\npassed = any(s >= 60 for s in scores)\nprint(f'Anyone passed? {passed}')",
+                        output: "Anyone passed? True"
+                    },
+                    tags: ["boolean", "check"]
+                },
+                {
+                    name: "all()",
+                    syntax: "all(iterable)",
+                    desc: "Returns True if all elements are True",
+                    example: {
+                        code: "ages = [21, 25, 30, 28]\nall_adults = all(age >= 18 for age in ages)\nprint(f'All adults? {all_adults}')",
+                        output: "All adults? True"
+                    },
+                    tags: ["boolean", "check"]
+                },
+                {
+                    name: "reversed()",
+                    syntax: "reversed(iterable)",
+                    desc: "Returns a reverse iterator",
+                    example: {
+                        code: "countdown = list(reversed([1, 2, 3]))\nprint(countdown)",
+                        output: "[3, 2, 1]"
+                    },
+                    tags: ["iterator", "reverse"]
+                }
+            ],
+            "String Methods": [
+                {
+                    name: "upper() / lower()",
+                    syntax: "str.upper() / str.lower()",
+                    desc: "Converts string to uppercase or lowercase",
+                    example: {
+                        code: "msg = 'Hello World'\nprint(msg.upper())\nprint(msg.lower())",
+                        output: "HELLO WORLD\nhello world"
+                    },
+                    tags: ["string", "case"]
+                },
+                {
+                    name: "strip()",
+                    syntax: "str.strip()",
+                    desc: "Removes leading and trailing whitespace",
+                    example: {
+                        code: "email = '  user@example.com  '\nclean = email.strip()\nprint(f'|{clean}|')",
+                        output: "|user@example.com|"
+                    },
+                    tags: ["string", "clean"]
+                },
+                {
+                    name: "split()",
+                    syntax: "str.split(separator)",
+                    desc: "Splits string into a list",
+                    example: {
+                        code: "csv = 'apple,banana,cherry'\nfruits = csv.split(',')\nprint(fruits)",
+                        output: "['apple', 'banana', 'cherry']"
+                    },
+                    tags: ["string", "parse"]
+                },
+                {
+                    name: "join()",
+                    syntax: "str.join(iterable)",
+                    desc: "Joins iterable elements into a string",
+                    example: {
+                        code: "words = ['Python', 'is', 'awesome']\nsentence = ' '.join(words)\nprint(sentence)",
+                        output: "Python is awesome"
+                    },
+                    tags: ["string", "combine"]
+                },
+                {
+                    name: "replace()",
+                    syntax: "str.replace(old, new)",
+                    desc: "Replaces substring with another",
+                    example: {
+                        code: "text = 'I love Java'\nnew_text = text.replace('Java', 'Python')\nprint(new_text)",
+                        output: "I love Python"
+                    },
+                    tags: ["string", "modify"]
+                },
+                {
+                    name: "find()",
+                    syntax: "str.find(substring)",
+                    desc: "Finds first occurrence index (-1 if not found)",
+                    example: {
+                        code: "email = 'user@example.com'\nat_pos = email.find('@')\nprint(f'@ at position: {at_pos}')",
+                        output: "@ at position: 4"
+                    },
+                    tags: ["string", "search"]
+                },
+                {
+                    name: "startswith() / endswith()",
+                    syntax: "str.startswith(prefix) / str.endswith(suffix)",
+                    desc: "Checks string beginning or ending",
+                    example: {
+                        code: "file = 'document.pdf'\nif file.endswith('.pdf'):\n    print('PDF file!')",
+                        output: "PDF file!"
+                    },
+                    tags: ["string", "check"]
+                },
+                {
+                    name: "count()",
+                    syntax: "str.count(substring)",
+                    desc: "Counts occurrences of a substring",
+                    example: {
+                        code: "text = 'hello hello world'\ncount = text.count('hello')\nprint(f'hello appears {count} times')",
+                        output: "hello appears 2 times"
+                    },
+                    tags: ["string", "count"]
+                }
+            ],
+            "List & Dict Methods": [
+                {
+                    name: "append()",
+                    syntax: "list.append(item)",
+                    desc: "Adds an item to the end of a list",
+                    example: {
+                        code: "cart = ['🍎', '🍌']\ncart.append('🍊')\nprint(cart)",
+                        output: "['🍎', '🍌', '🍊']"
+                    },
+                    tags: ["list", "add"]
+                },
+                {
+                    name: "extend()",
+                    syntax: "list.extend(iterable)",
+                    desc: "Adds multiple items to a list",
+                    example: {
+                        code: "nums = [1, 2, 3]\nnums.extend([4, 5])\nprint(nums)",
+                        output: "[1, 2, 3, 4, 5]"
+                    },
+                    tags: ["list", "add"]
+                },
+                {
+                    name: "insert()",
+                    syntax: "list.insert(index, item)",
+                    desc: "Inserts an item at a given position",
+                    example: {
+                        code: "colors = ['red', 'blue']\ncolors.insert(1, 'green')\nprint(colors)",
+                        output: "['red', 'green', 'blue']"
+                    },
+                    tags: ["list", "insert"]
+                },
+                {
+                    name: "remove()",
+                    syntax: "list.remove(value)",
+                    desc: "Removes the first matching item",
+                    example: {
+                        code: "tasks = ['eat', 'code', 'sleep']\ntasks.remove('code')\nprint(tasks)",
+                        output: "['eat', 'sleep']"
+                    },
+                    tags: ["list", "remove"]
+                },
+                {
+                    name: "pop()",
+                    syntax: "list.pop(index=-1)",
+                    desc: "Removes and returns an item by index",
+                    example: {
+                        code: "stack = [1, 2, 3, 4]\nlast = stack.pop()\nprint(f'Popped: {last}, Remaining: {stack}')",
+                        output: "Popped: 4, Remaining: [1, 2, 3]"
+                    },
+                    tags: ["list", "remove"]
+                },
+                {
+                    name: "get()",
+                    syntax: "dict.get(key, default=None)",
+                    desc: "Returns a value for a key (safe access)",
+                    example: {
+                        code: "user = {'name': 'Alice', 'age': 25}\nage = user.get('age', 'Unknown')\nprint(f'Age: {age}')",
+                        output: "Age: 25"
+                    },
+                    tags: ["dict", "access"]
+                },
+                {
+                    name: "update()",
+                    syntax: "dict.update(mapping)",
+                    desc: "Updates a dictionary with key-value pairs",
+                    example: {
+                        code: "profile = {'name': 'Bob'}\nprofile.update({'age': 30, 'city': 'NYC'})\nprint(profile)",
+                        output: "{'name': 'Bob', 'age': 30, 'city': 'NYC'}"
+                    },
+                    tags: ["dict", "update"]
+                }
+            ],
+            "Type & Object Info": [
+                {
+                    name: "type()",
+                    syntax: "type(object)",
+                    desc: "Returns the type of an object",
+                    example: {
+                        code: "data = [1, 2, 3]\nprint(type(data))\nprint(type(42))",
+                        output: "<class 'list'>\n<class 'int'>"
+                    },
+                    tags: ["type", "info"]
+                },
+                {
+                    name: "isinstance()",
+                    syntax: "isinstance(object, classinfo)",
+                    desc: "Checks if an object belongs to a class",
+                    example: {
+                        code: "value = 'hello'\nif isinstance(value, str):\n    print('It is a string!')",
+                        output: "It is a string!"
+                    },
+                    tags: ["type", "check"]
+                },
+                {
+                    name: "dir()",
+                    syntax: "dir(object)",
+                    desc: "Lists attributes and methods of an object",
+                    example: {
+                        code: "# Show methods of a string\nmethods = [m for m in dir('') if not m.startswith('_')]\nprint(methods[:5])",
+                        output: "['capitalize', 'casefold', 'center', 'count', 'encode']"
+                    },
+                    tags: ["introspection", "info"]
+                },
+                {
+                    name: "id()",
+                    syntax: "id(object)",
+                    desc: "Returns the unique identity of an object",
+                    example: {
+                        code: "a = [1, 2, 3]\nb = a\nprint(f'Same object? {id(a) == id(b)}')",
+                        output: "Same object? True"
+                    },
+                    tags: ["object", "identity"]
+                },
+                {
+                    name: "callable()",
+                    syntax: "callable(object)",
+                    desc: "Checks if an object is callable (function/method)",
+                    example: {
+                        code: "def greet(): pass\nprint(callable(greet))\nprint(callable(42))",
+                        output: "True\nFalse"
+                    },
+                    tags: ["type", "check"]
+                }
+            ],
+            "Input/Output": [
+                {
+                    name: "print()",
+                    syntax: "print(*objects, sep=' ', end='\\n')",
+                    desc: "Prints output to console",
+                    example: {
+                        code: "print('Hello', 'World', sep='-')\nprint('Python', end='!')",
+                        output: "Hello-World\nPython!"
+                    },
+                    tags: ["output", "basic"]
+                },
+                {
+                    name: "input()",
+                    syntax: "input(prompt)",
+                    desc: "Reads user input from console",
+                    example: {
+                        code: "# name = input('Enter name: ')\n# print(f'Hello, {name}!')\nprint('Interactive function - try in terminal')",
+                        output: "Interactive function - try in terminal"
+                    },
+                    tags: ["input", "interactive"]
+                },
+                {
+                    name: "open()",
+                    syntax: "open(file, mode='r')",
+                    desc: "Opens a file and returns a file object",
+                    example: {
+                        code: "# with open('data.txt', 'w') as f:\n#     f.write('Hello File!')\nprint('Opens files for reading/writing')",
+                        output: "Opens files for reading/writing"
+                    },
+                    tags: ["file", "io"]
+                }
+            ],
+            "Advanced Functions": [
+                {
+                    name: "chr() / ord()",
+                    syntax: "chr(i) / ord(c)",
+                    desc: "Converts between integers and Unicode characters",
+                    example: {
+                        code: "print(chr(65), chr(97))\nprint(ord('A'), ord('a'))",
+                        output: "A a\n65 97"
+                    },
+                    tags: ["unicode", "conversion"]
+                },
+                {
+                    name: "bin() / hex() / oct()",
+                    syntax: "bin(n) / hex(n) / oct(n)",
+                    desc: "Converts numbers to different bases",
+                    example: {
+                        code: "num = 42\nprint(f'Binary: {bin(num)}')\nprint(f'Hex: {hex(num)}')",
+                        output: "Binary: 0b101010\nHex: 0x2a"
+                    },
+                    tags: ["number", "conversion"]
+                },
+                {
+                    name: "eval()",
+                    syntax: "eval(expression)",
+                    desc: "Evaluates a Python expression from a string",
+                    example: {
+                        code: "result = eval('2 + 3 * 4')\nprint(f'Result: {result}')",
+                        output: "Result: 14"
+                    },
+                    tags: ["dynamic", "eval"]
+                },
+                {
+                    name: "format()",
+                    syntax: "format(value, format_spec)",
+                    desc: "Formats a value into a string",
+                    example: {
+                        code: "pi = 3.14159\nprint(format(pi, '.2f'))\nprint(format(1000000, ','))",
+                        output: "3.14\n1,000,000"
+                    },
+                    tags: ["format", "string"]
+                }
+            ]
+        };
+
+        function renderFunctions() {
+            const container = document.getElementById('functionsContainer');
+            container.innerHTML = '';
+
+            for (const [category, functions] of Object.entries(functionsData)) {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category';
+                
+                const categoryTitle = document.createElement('h2');
+                categoryTitle.className = 'category-title';
+                categoryTitle.textContent = category;
+                categoryDiv.appendChild(categoryTitle);
+
+                const grid = document.createElement('div');
+                grid.className = 'functions-grid';
+
+                functions.forEach(func => {
+                    const card = document.createElement('div');
+                    card.className = 'function-card';
+                    card.dataset.name = func.name.toLowerCase();
+                    card.dataset.desc = func.desc.toLowerCase();
+                    
+                    const tags = func.tags.map(tag => 
+                        `<span class="tag">${tag}</span>`
+                    ).join('');
+
+                    card.innerHTML = `
+                        <div class="function-name">${func.name}</div>
+                        <div class="function-syntax">${func.syntax}</div>
+                        <div class="function-desc">${func.desc}</div>
+                        <div class="function-example">
+                            <div class="example-title">💡 Example:</div>
+                            <div class="example-code">${func.example.code}</div>
+                            <div class="example-output">→ ${func.example.output}</div>
+                        </div>
+                        <div style="margin-top: 10px">${tags}</div>
+                    `;
+
+                    grid.appendChild(card);
+                });
+
+                categoryDiv.appendChild(grid);
+                container.appendChild(categoryDiv);
+            }
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.function-card');
+
+            cards.forEach(card => {
+                const name = card.dataset.name;
+                const desc = card.dataset.desc;
+                
+                if (name.includes(searchTerm) || desc.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Initialize
+        renderFunctions();
+
+        // Add parallax effect on mouse move
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.function-card');
+
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const cardX = rect.left + rect.width / 2;
+                const cardY = rect.top + rect.height / 2;
+                
+                const distX = (e.clientX - cardX) / 50;
+                const distY = (e.clientY - cardY) / 50;
+                
+                card.style.transform = `perspective(1000px) rotateY(${distX}deg) rotateX(${-distY}deg)`;
+            });
+        });
+
+        // Reset transform when mouse leaves
+        document.addEventListener('mouseleave', () => {
+            const cards = document.querySelectorAll('.function-card');
+            cards.forEach(card => {
+                card.style.transform = '';
+            });
+        });
+    </script>
+</body>
+</html>
